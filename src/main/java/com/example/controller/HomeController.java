@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class HomeController {
 
-    @GetMapping("/")
+    @GetMapping("/") // Maps HTTP GET requests to the root URL
     public String home() {
         return "Welcome to the CRUD Application!";
     }
