@@ -7,11 +7,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import jakarta.validation.Valid;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/api/users")
 public class UserController {
 
     @Autowired
@@ -22,53 +25,55 @@ public class UserController {
     public ResponseEntity<List<User>> getAllUsers() {
         List<User> users = userService.getAllUsers();
         if (users.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT); // 204 No Content if no users found
+            return ResponseEntity.noContent().build(); // 204 No Content if no users found
         }
-        return new ResponseEntity<>(users, HttpStatus.OK);
+        return ResponseEntity.ok(users); // 200 OK with user list
     }
 
     // Fetch user by ID
     @GetMapping("/{id}")
-    public ResponseEntity<User> getUserById(@PathVariable Long id) {
+    public ResponseEntity<Object> getUserById(@PathVariable Long id) {
         Optional<User> user = userService.getUserById(id);
-        return user.map(ResponseEntity::ok)
-                   .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND)); // 404 if not found
+        if (user.isPresent()) {
+            return ResponseEntity.ok(user.get()); // Return User if found
+        } else {
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("message", "User not found");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse); // 404 if not found
+        }
     }
 
-    // Registration endpoint (Ensure it's mapped to POST)
+    // Registration endpoint
     @PostMapping("/register")
-    public ResponseEntity<User> registerUser(@RequestBody User user) {
-        if (user == null) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST); // 400 Bad Request if body is null
-        }
+    public ResponseEntity<Object> registerUser(@Valid @RequestBody User user) {
         User createdUser = userService.saveUser(user);
-        return new ResponseEntity<>(createdUser, HttpStatus.CREATED); // 201 Created
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdUser); // 201 Created
     }
 
     // Update user by ID
     @PutMapping("/{id}")
-    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User user) {
-        if (user == null) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST); // 400 Bad Request if body is null
-        }
-
+    public ResponseEntity<Object> updateUser(@PathVariable Long id, @Valid @RequestBody User user) {
         Optional<User> existingUser = userService.getUserById(id);
         if (existingUser.isPresent()) {
             user.setId(id); // Ensure the correct ID is set
             User updatedUser = userService.saveUser(user);
-            return new ResponseEntity<>(updatedUser, HttpStatus.OK); // 200 OK
+            return ResponseEntity.ok(updatedUser); // 200 OK with updated user
         }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND); // 404 if user doesn't exist
+        Map<String, String> errorResponse = new HashMap<>();
+        errorResponse.put("message", "User not found");
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse); // 404 if user doesn't exist
     }
 
     // Delete user by ID
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
+    public ResponseEntity<Object> deleteUser(@PathVariable Long id) {
         Optional<User> user = userService.getUserById(id);
         if (user.isPresent()) {
             userService.deleteUser(id);
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT); // 204 No Content on successful deletion
+            return ResponseEntity.noContent().build(); // 204 No Content on successful deletion
         }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND); // 404 if user doesn't exist
+        Map<String, String> errorResponse = new HashMap<>();
+        errorResponse.put("message", "User not found");
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse); // 404 if user doesn't exist
     }
 }
