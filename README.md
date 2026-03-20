@@ -28,3 +28,14 @@ A scalable RESTful API built using Java Spring Boot and MySQL to manage user dat
 3. Run the application:
    ```bash
    mvn spring-boot:run
+
+
+   ## 📌 API Endpoints
+
+| Method | Endpoint        | Description              |
+|--------|---------------|--------------------------|
+| GET    | /users        | Retrieve all users       |
+| GET    | /users/{id}   | Retrieve user by ID      |
+| POST   | /users        | Create new user          |
+| PUT    | /users/{id}   | Update user              |
+| DELETE | /users/{id}   | Delete user              |
