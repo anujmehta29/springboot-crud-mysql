@@ -1,16 +1,30 @@
-# CRUD Example
+# Spring Boot REST API - User Management System
 
-A simple CRUD application using Spring Boot and MySQL.
+A scalable RESTful API built using Java Spring Boot and MySQL to manage user data with full CRUD operations.
 
-## Setup
+## 🚀 Features
+- Create, Read, Update, Delete (CRUD) operations
+- RESTful API design following best practices
+- MySQL database integration
+- Layered architecture (Controller, Service, Repository)
+- Input validation and error handling
 
-1. Update `src/main/resources/application.properties` with your database credentials.
-2. Run the application using `mvn spring-boot:run`.
+## 🛠 Tech Stack
+- Java
+- Spring Boot
+- MySQL
+- Maven
 
-## Endpoints
+## 📂 Project Structure
+- Controller Layer → Handles API requests
+- Service Layer → Business logic
+- Repository Layer → Database interaction
 
-- `GET /users` - Retrieve all users
-- `GET /users/{id}` - Retrieve a user by ID
-- `POST /users` - Create a new user
-- `PUT /users/{id}` - Update a user
-- `DELETE /users/{id}` - Delete a user
+## ⚙️ Setup Instructions
+
+1. Clone the repository
+2. Configure database credentials in:
+   `src/main/resources/application.properties`
+3. Run the application:
+   ```bash
+   mvn spring-boot:run
